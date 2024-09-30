@@ -8,7 +8,7 @@ http://127.0.0.1:8000/api
 ### Registration
 `POST /register`
 
-```javascript
+```JS
 Request Body:
 
 {
@@ -16,21 +16,20 @@ Request Body:
   "last_name": "string",
   "email": "string",
   "password": "string",
-  "password_confirmation": "string"
 }
-
-
 
 Success Response (201 Created):
 
 {
   "message": "User registered successfully"
 }
+
 ```
  
-```javascript
-  ### Login
-    `POST /login`
+```JS
+
+### Login
+`POST /login`
 
 Request Body:
 
@@ -39,23 +38,32 @@ Request Body:
   "password": "string"
 }
 
+Success Response (200 OK):
+
+{
+  "message": "Logged in successfully"
+}
+
+
+
+### Verify Token
+`GET /verify-token`
 
 Success Response (200 OK):
 
 {
-  "user": {
-    "id": "number",
-    "name": "string",
-    "email": "string"
-  },
-  "token": "string"
+  "message": "Token is valid"
+}
+
+Token Refresh Response (200 OK):
+
+{
+  "message": "Token refreshed"
 }
 ```
 
-
-```javascript
+```JS
 ## Implementation in Next.js
-
 
 import axios from 'axios';
 
@@ -81,14 +89,22 @@ export const login = async (credentials) => {
     throw error.response.data;
   }
 };
+
+export const verifyToken = async () => {
+  try {
+    const response = await api.get('/verify-token');
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
 ```
 
-```javascript
 
+```JS
 ## Usage in React Components
 
-
-import { register, login } from '../api';
+import { register, login, verifyToken } from '../api';
 
 // Registration
 const handleRegister = async (userData) => {
@@ -104,19 +120,29 @@ const handleRegister = async (userData) => {
 const handleLogin = async (credentials) => {
   try {
     const result = await login(credentials);
-    console.log('Logged in user:', result.user);
-    console.log('Auth token:', result.token);
+    console.log(result.message);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Verify Token
+const checkTokenValidity = async () => {
+  try {
+    const result = await verifyToken();
+    console.log(result.message);
   } catch (error) {
     console.error(error);
   }
 };
 ```
 
+```JS
 ## CSRF Protection with Laravel Sanctum
 
 1. Set up an Axios instance for your API requests:
 
-```javascript
+
 import axios from 'axios';
 
 const api = axios.create({
@@ -128,6 +154,7 @@ const api = axios.create({
 async function getCsrfCookie() {
   await api.get('/sanctum/csrf-cookie');
 }
+
 // Use this function before your login or registration requests:
 async function login(credentials) {
   await getCsrfCookie();
@@ -141,11 +168,15 @@ async function register(userData) {
   return response.data;
 }
 
-```
+async function verifyToken() {
+  const response = await api.get('/api/verify-token');
+  return response.data;
+}
 
+```
 
 ## Error Handling
 The API returns appropriate error messages and status codes for invalid requests. Handle these errors in your front-end application to provide user feedback.
 
 ## Authentication
-After successful login, store the returned token securely (e.g., in HttpOnly cookies or local storage). Include this token in the Authorization header for subsequent authenticated requests.
+After successful login, the API sets the authentication token in an HTTP-only cookie. This token is automatically included in subsequent requests. Use the /verify-token endpoint to check the token's validity and refresh it if necessary.

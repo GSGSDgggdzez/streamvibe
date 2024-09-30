@@ -12,10 +12,11 @@ http://127.0.0.1:8000/api
 Request Body:
 
 {
-  "first_name": "string",
-  "last_name": "string",
-  "email": "string",
-  "password": "string",
+  "FirstName": "string",
+  "LastName": "string",
+  "Email": "string",
+  "Password": "string",
+  'password_confirmation':"string"
 }
 
 Success Response (201 Created):
@@ -24,6 +25,10 @@ Success Response (201 Created):
   "message": "User registered successfully"
 }
 
+Error Response (400 Bad Request):
+{
+  "message": "Registration failed"
+}
 ```
  
 ```JS
@@ -146,7 +151,7 @@ const checkTokenValidity = async () => {
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: 'http://127.0.0.1:8000',
   withCredentials: true, // Important for Sanctum to work correctly
 });
 
@@ -158,18 +163,18 @@ async function getCsrfCookie() {
 // Use this function before your login or registration requests:
 async function login(credentials) {
   await getCsrfCookie();
-  const response = await api.post('/api/login', credentials);
+  const response = await api.post('/login', credentials);
   return response.data;
 }
 
 async function register(userData) {
   await getCsrfCookie();
-  const response = await api.post('/api/register', userData);
+  const response = await api.post('/register', userData);
   return response.data;
 }
 
 async function verifyToken() {
-  const response = await api.get('/api/verify-token');
+  const response = await api.get('/verify-token');
   return response.data;
 }
 

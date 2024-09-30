@@ -25,6 +25,7 @@ class RegisteredUserController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password_confirmation' => ['required', 'same:password'],
         ]);
 
         $user = User::create([
@@ -39,6 +40,10 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return response()->json(['message' => 'User registered successfully'], 201);
+        if (Auth::check()) {
+            return response()->json(['success' => true, 'message' => 'User registered successfully'], 201);
+        }else{
+            return response()->json(['success' => false, 'message' => 'Registration failed'], 400);
+        }
     }
 }

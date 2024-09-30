@@ -112,6 +112,38 @@ const handleLogin = async (credentials) => {
 };
 ```
 
+## CSRF Protection with Laravel Sanctum
+
+1. Set up an Axios instance for your API requests:
+
+```javascript
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'http://127.0.0.1:8000/api',
+  withCredentials: true, // Important for Sanctum to work correctly
+});
+
+// Before making any API calls, ensure you've obtained the CSRF cookie:
+async function getCsrfCookie() {
+  await api.get('/sanctum/csrf-cookie');
+}
+// Use this function before your login or registration requests:
+async function login(credentials) {
+  await getCsrfCookie();
+  const response = await api.post('/api/login', credentials);
+  return response.data;
+}
+
+async function register(userData) {
+  await getCsrfCookie();
+  const response = await api.post('/api/register', userData);
+  return response.data;
+}
+
+```
+
+
 ## Error Handling
 The API returns appropriate error messages and status codes for invalid requests. Handle these errors in your front-end application to provide user feedback.
 

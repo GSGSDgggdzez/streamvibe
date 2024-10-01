@@ -1,7 +1,7 @@
 # StreamVibe API Authentication Documentation
 
 ## Base URL
-http://127.0.0.1:8000/api
+https://e6b5-154-72-170-5.ngrok-free.app 
 
 ## Endpoints
 
@@ -73,7 +73,7 @@ Token Refresh Response (200 OK):
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api',
+  baseURL: 'https://e6b5-154-72-170-5.ngrok-free.app',
   withCredentials: true,
 });
 
@@ -151,7 +151,7 @@ const checkTokenValidity = async () => {
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000',
+  baseURL: 'https://e6b5-154-72-170-5.ngrok-free.app',
   withCredentials: true, // Important for Sanctum to work correctly
 });
 
